@@ -1,12 +1,13 @@
 <template>
-  <div id="main" class="fill-height">
+  <div id="main">
     <div v-if="playing">
       <v-sheet
         elevation="2"
-        class="rounded-lg spacing-playground pa-10 font-weight-medium mx-auto textcontent"
+        class="rounded-lg spacing-playground pa-10 font-weight-medium mx-auto textcontent focus"
         min-height="40vh"
         max-width="1000px"
         @keypress.prevent="onkeyPress"
+        @blur="onBlur"
         key="playing"
         ref="typingArea"
         tabindex="0"
@@ -25,7 +26,6 @@
         </div>
       </v-sheet>
       <br />
-      <br />
       <!-- <p class="text-h5">{{ correctedWordCount }} / {{ wordCounts }}</p> -->
       <p class="text-h7">
         ミスタイプ: {{ missCount }} 回 タイム:
@@ -36,13 +36,16 @@
       <v-btn depressed color="primary" class="mb-6" @click="refleshAll"
         >リセット</v-btn
       >
-      <SimpleKeyboard
-        @onChange.prevent="onChange"
-        @onKeyPress.prevent="onKeyPress"
-        :input="input"
-      />
+      <SimpleKeyboard @onChange="onChange" :input="input" />
     </div>
-    <div v-else @keypress.enter="startTyping" tabindex="0" ref="div">
+    <div
+      v-else
+      @keypress.enter="startTyping"
+      tabindex="0"
+      ref="startGame"
+      @blur="onBlurStartGame"
+      class="focus"
+    >
       <p class="text-h4">スタート</p>
       <v-btn depressed color="primary" class="mb-6" @click="startTyping"
         >New Game</v-btn
@@ -125,7 +128,7 @@ export default {
   created() {},
   mounted() {
     // console.log(this.$refs.div);
-    this.$refs.div.focus();
+    this.$refs.startGame.focus();
     this.wordCounts = this.questions.length;
     // addEventListener("keydown", (e) => {
     //   if (e.key !== " " || this.playing) {
@@ -153,6 +156,14 @@ export default {
     },
   },
   methods: {
+    onBlur() {
+      // alert("focusが外れました");
+      this.$refs.typingArea.$el.focus();
+    },
+    onBlurStartGame() {
+      // alert("focusが外れました");
+      this.$refs.startGame.focus();
+    },
     setWord() {
       this.questionStr = this.questions.splice(
         Math.floor(Math.random() * this.questions.length),
@@ -281,5 +292,8 @@ export default {
 }
 .p-inline {
   display: inline;
+}
+.focus:focus {
+  outline: none;
 }
 </style>
