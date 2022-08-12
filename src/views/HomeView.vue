@@ -11,7 +11,7 @@
         ref="typingArea"
         tabindex="0"
       >
-        <div style="white-space: pre-wrap; text-align: start" class="text-h4">
+        <div style="white-space: pre-wrap; text-align: start" class="text-h5">
           <p class="green--text text--darken-3 p-inline">{{ typedStr }}</p>
           <p v-if="isMissType" class="red--text grey lighten-2 p-inline">
             {{ typingStr }}
@@ -49,40 +49,25 @@
       >
     </div>
     <!-- --------------------------------------------------------------------------------------- -->
-    <v-dialog v-model="dialog" max-width="290">
-      <v-card>
-        <v-card-title class="text-h5 blue--text">Clear!</v-card-title>
-
-        <v-card-text>
-          タイム: {{ formatedTime }}
-          <br />
-          精度: {{ accurateTyping }} %
-          <br />
-          wpm(1分あたりの入力文字数): {{ wpm }}
-          <br />
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-
-          <v-btn dark color="green darken-1" @click="refleshAll"
-            >もう一度挑戦する</v-btn
-          >
-
-          <v-spacer></v-spacer>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <OpenModal
+      :formatedTime="formatedTime"
+      :accurateTyping="Number(accurateTyping)"
+      :wpm="Number(wpm)"
+      :dialogProps="Boolean(dialog)"
+      :refleshAll="refleshAll"
+    ></OpenModal>
   </div>
 </template>
 
 <script>
 import SimpleKeyboard from "../components/SimpleKeyboard.vue";
+import OpenModal from "@/components/OpenModal.vue";
 
 export default {
   name: "HomeView",
   components: {
     SimpleKeyboard,
+    OpenModal,
   },
   data() {
     return {
@@ -112,7 +97,11 @@ export default {
     // },
     typingStr() {
       console.log(this.questionStr[this.currentIndex]);
-      return this.questionStr[this.currentIndex];
+      if (this.questionStr[this.currentIndex] !== undefined) {
+        return this.questionStr[this.currentIndex].replaceAll("↵", "↵\n");
+      } else {
+        return this.questionStr[this.currentIndex];
+      }
     },
     notYetTypedStr() {
       return this.questionStr
@@ -182,13 +171,6 @@ export default {
       }
       // console.log(e);
       if (e === undefined) return;
-      //入力文字とお題の文字が一致したら
-      // if (e.key === "Enter") {
-      //   console.log(e.key);
-      // }
-      // if (e.key === "space") {
-      //   console.log(e.key);
-      // }
       if (this.questionStr[this.currentIndex] === "↵" && e.key === "Enter") {
         console.log(true);
         this.typedStr += "\n";
@@ -257,7 +239,7 @@ export default {
       this.correctedWordCount = 0;
       this.wordCounts = 0;
       this.dialog = false;
-      this.word = "";
+      this.typedStr = "";
       clearInterval(this.timer);
     },
     startTyping() {
