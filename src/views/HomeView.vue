@@ -5,7 +5,7 @@
         elevation="2"
         class="rounded-lg spacing-playground pa-10 font-weight-medium mx-auto textcontent focus"
         min-height="40vh"
-        max-width="1000px"
+        max-width="800px"
         @keypress.prevent="onkeyPress"
         @blur="onBlur"
         key="playing"

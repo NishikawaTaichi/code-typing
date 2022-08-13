@@ -69,6 +69,9 @@ export default {
     items: [
       { title: "Home", icon: "mdi-view-dashboard", path: "/" },
       { title: "About", icon: "mdi-forum", path: "/about" },
+      { title: "Signup", icon: "mdi-account-check", path: "/signup" },
+      { title: "Login", icon: "mdi-login", path: "/login" },
+      { title: "Logout", icon: "mdi-logout", path: "/" },
     ],
   }),
 };

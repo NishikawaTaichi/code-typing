@@ -4,7 +4,13 @@ import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import dayjs from "./plugins/days";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from "./firebase-config";
+
 Vue.config.productionTip = false;
+
+const firebaseApp = initializeApp(firebaseConfig);
+export { firebaseApp };
 
 new Vue({
   router,
