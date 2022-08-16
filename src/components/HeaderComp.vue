@@ -3,28 +3,43 @@
     <v-navigation-drawer v-model="drawer" absolute temporary app>
       <v-list-item>
         <v-list-item-avatar>
-          <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>
+          <v-img src="https://joeschmoe.io/api/v1/random"></v-img>
         </v-list-item-avatar>
 
         <v-list-item-content>
-          <v-list-item-title>ユーザーネーム</v-list-item-title>
+          <v-list-item-title>
+            {{ auth && auth.displayName }}
+          </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 
       <v-divider></v-divider>
 
       <v-list dense>
-        <v-list-item v-for="item in items" :key="item.title" link>
+        <v-list-item
+          v-for="item in items"
+          :key="item.title"
+          link
+          :to="item.path"
+        >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
             <v-list-item-title>
-              <router-link class="routerLink" :to="item.path">{{
-                item.title
-              }}</router-link>
+              {{ item.title }}
             </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item @click="logout">
+          <v-list-item-icon>
+            <v-icon>mdi-logout</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>Logout</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -63,17 +78,36 @@
 </template>
 
 <script>
+import { getAuth, signOut } from "firebase/auth";
 export default {
   data: () => ({
     drawer: null,
     items: [
       { title: "Home", icon: "mdi-view-dashboard", path: "/" },
-      { title: "About", icon: "mdi-forum", path: "/about" },
+      { title: "Score", icon: "mdi-chart-line", path: "/score" },
       { title: "Signup", icon: "mdi-account-check", path: "/signup" },
       { title: "Login", icon: "mdi-login", path: "/login" },
-      { title: "Logout", icon: "mdi-logout", path: "/" },
     ],
+    auth: {},
   }),
+  methods: {
+    logout() {
+      console.log("logout");
+      const auth = getAuth();
+      signOut(auth)
+        .then(() => {
+          sessionStorage.removeItem("user");
+          sessionStorage.message = "ログアウトに成功しました";
+          this.$router.push("/login");
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+    },
+  },
+  mounted() {
+    this.auth = JSON.parse(sessionStorage.getItem("user"));
+  },
 };
 </script>
 

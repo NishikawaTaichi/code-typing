@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <HeaderComp></HeaderComp>
-    <v-main>
+    <v-main class="grey lighten-3">
       <v-container fluid>
         <router-view />
       </v-container>

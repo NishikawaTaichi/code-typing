@@ -63,6 +63,8 @@
 </template>
 
 <script>
+// import db from "@/main";
+import { getFirestore, setDoc, doc } from "firebase/firestore";
 import SimpleKeyboard from "../components/SimpleKeyboard.vue";
 import OpenModal from "@/components/OpenModal.vue";
 
@@ -92,6 +94,7 @@ export default {
       dialog: false,
       typedStr: "",
       input: "",
+      auth: {},
     };
   },
   computed: {
@@ -125,7 +128,10 @@ export default {
       ).toFixed(1);
     },
   },
-  created() {},
+  created() {
+    this.auth = JSON.parse(sessionStorage.getItem("user"));
+    console.log("uid:", this.auth.uid);
+  },
   mounted() {
     // console.log(this.$refs.div);
     this.$refs.startGame.focus();
@@ -199,6 +205,7 @@ export default {
           clearInterval(this.timer);
           this.finished = true;
           this.dialog = true;
+          this.setScore();
           // this.setWord();
         }
       } else {
@@ -206,6 +213,40 @@ export default {
         this.isMissType = true;
         this.missCount++;
       }
+    },
+    async setScore() {
+      const db = getFirestore();
+      // const userDocRef = doc(db, "users", this.auth.uid);
+      const scoreRef = doc(db, "users", this.auth.uid, "scores");
+      await setDoc(
+        scoreRef,
+        {
+          id: this.auth.uid,
+          time: this.formatedTime,
+          accuracy: this.accurateTyping,
+          wpm: this.wpm,
+        },
+        { merge: true }
+      ).catch((error) => {
+        console.log(error);
+      });
+      // const userDocRef = doc(db, "users", this.user.uid);
+      // const userDocSnap = await getDoc(userDocRef);
+
+      // if (userDocSnap.exists()) {
+      //   await updateDoc(userDocRef, {
+      //     id: this.user.uid,
+      //     time: this.formatedTime,
+      //     accuracy: this.accurateTyping,
+      //     wpm: this.wpm,
+      //   });
+      // }
+      // const docRef = addDoc(collection(db, "scores"), {
+      //   id: this.user.uid,
+      //   time: this.formatedTime,
+      //   accuracy: this.accurateTyping,
+      //   wpm: this.wpm,
+      // });
     },
     // keyDown() {
     //   addEventListener("keydown", (e) => {
