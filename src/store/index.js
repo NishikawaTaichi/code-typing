@@ -27,7 +27,7 @@ export default new Vuex.Store({
     },
     onUserStatusChanged(state, status) {
       state.status = status; // ログインしているかどうか true or false
-    }
+    },
   },
   actions: {
     setAsyncScores({ commit }, payload) {

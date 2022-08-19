@@ -42,9 +42,9 @@
 </template>
 
 <script>
-import AccurateScore from "@/components/AccurateScore.vue";
-import WpmScore from "@/components/WpmScore.vue";
-import TimeScore from "@/components/TimeScore.vue";
+import AccurateScore from "@/components/score/AccurateScore.vue";
+import WpmScore from "@/components/score/WpmScore.vue";
+import TimeScore from "@/components/score/TimeScore.vue";
 // import db from "@/main";
 import {
   getFirestore,
@@ -96,10 +96,9 @@ export default {
     const docSnap = await getDocs(q);
 
     docSnap.forEach((doc) => {
-      // console.log(doc.data());
       this.scoreList.push(doc.data());
     });
-    // console.log("scoreList", this.scoreList);
+
     this.$refs.childComponents.setArray();
     // // vuexに格納
     // this.$store.dispatch("setAsyncScores", this.scoreList);

@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import HeaderComp from "./components/HeaderComp.vue";
+import HeaderComp from "./components/layouts/HeaderComp.vue";
 
 export default {
   name: "App",

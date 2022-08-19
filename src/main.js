@@ -5,7 +5,7 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 import dayjs from "./plugins/days";
 import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "./firebase-config";
+import { firebaseConfig } from "./firebase/firebase-config";
 
 Vue.config.productionTip = false;
 

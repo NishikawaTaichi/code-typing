@@ -51,7 +51,7 @@
         >New Game</v-btn
       >
     </div>
-    <!-- --------------------------------------------------------------------------------------- -->
+
     <OpenModal
       :formatedTime="formatedTime"
       :accurateTyping="Number(accurateTyping)"
@@ -142,38 +142,21 @@ export default {
     // console.log(this.$refs.div);
     this.$refs.startGame.focus();
     this.wordCounts = this.questions.length;
-    // addEventListener("keydown", (e) => {
-    //   if (e.key !== " " || this.playing) {
-    //     return;
-    //   }
-    //   this.playing = true;
-    //   this.setWord();
-    //   // this.keyDown();
-    //   console.log("created");
-    // });
   },
   watch: {
     playing: function (newVal) {
-      // await (this.playing = true);
       if (newVal === true) {
-        // console.log("表示/非表示");
         this.$nextTick(() => {
-          // console.log(this.$refs.typingArea.$el);
           this.$refs.typingArea.$el.focus();
         });
       }
     },
-    questionStr: function () {
-      console.log(this.questionStr);
-    },
   },
   methods: {
     onBlur() {
-      // alert("focusが外れました");
       this.$refs.typingArea.$el.focus();
     },
     onBlurStartGame() {
-      // alert("focusが外れました");
       this.$refs.startGame.focus();
     },
     setWord() {
@@ -192,7 +175,7 @@ export default {
           this.timeOfTyping = new Date().getTime() - startTime;
         }, 100);
       }
-      // console.log(e);
+
       if (e === undefined) return;
       if (this.questionStr[this.currentIndex] === "↵" && e.key === "Enter") {
         console.log(true);
@@ -200,9 +183,6 @@ export default {
         this.isMissType = false;
         this.currentIndex++;
       } else if (e.key === this.questionStr[this.currentIndex]) {
-        // if (e.key === "Enter") {
-        //   console.log("改行");
-        // }
         this.typedStr += e.key;
         this.isMissType = false;
         this.currentIndex++;
@@ -232,54 +212,7 @@ export default {
       }).catch((error) => {
         console.log(error);
       });
-      // const userDocRef = doc(db, "users", this.user.uid);
-      // const userDocSnap = await getDoc(userDocRef);
-
-      // if (userDocSnap.exists()) {
-      //   await updateDoc(userDocRef, {
-      //     id: this.user.uid,
-      //     time: this.formatedTime,
-      //     accuracy: this.accurateTyping,
-      //     wpm: this.wpm,
-      //   });
-      // }
-      // const docRef = addDoc(collection(db, "scores"), {
-      //   id: this.user.uid,
-      //   time: this.formatedTime,
-      //   accuracy: this.accurateTyping,
-      //   wpm: this.wpm,
-      // });
     },
-    // keyDown() {
-    //   addEventListener("keydown", (e) => {
-    //     // 終了していたら開始しない
-    //     if (this.finished) return;
-    //     if (!this.started) {
-    //       this.started = true;
-    //       const startTime = new Date().getTime();
-    //       this.timer = setInterval(() => {
-    //         this.timeOfTyping = new Date().getTime() - startTime;
-    //       }, 100);
-    //     }
-    //     //入力文字とお題の文字が一致したら
-    //     if (e.key === this.questionStr[this.currentIndex]) {
-    //       //入力文字を格納し、お題から一文字削除
-    //       this.isMissType = false;
-    //       this.currentIndex++;
-    //       //お題の文字の範囲外になったら
-    //       if (this.currentIndex + 1 > this.questionStr.length) {
-    //         clearInterval(this.timer);
-    //         this.finished = true;
-    //         this.dialog = true;
-    //         // this.setWord();
-    //       }
-    //     } else {
-    //       // 入力文字とお題が一致しない場合は、
-    //       this.isMissType = true;
-    //       this.missCount++;
-    //     }
-    //   });
-    // },
     refleshAll() {
       this.playing = false;
       this.questions = ['function() {↵  console.log("aaaaaaaaaaa");↵}'];
