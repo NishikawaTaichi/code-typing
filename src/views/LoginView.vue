@@ -86,7 +86,7 @@ export default {
       const db = getFirestore();
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then(async (response) => {
-          this.$refs.form.reset();
+          // this.$refs.form.reset();
           //ログイン情報をsessionに格納
           const auth = {
             displayName: response.user.displayName,

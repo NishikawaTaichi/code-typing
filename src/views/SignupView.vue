@@ -97,7 +97,7 @@ export default {
       createUserWithEmailAndPassword(auth, this.email, this.password)
         .then(async (response) => {
           await updateProfile(response.user, { displayName: this.name });
-          this.$refs.form.reset();
+          // this.$refs.form.reset();
           sessionStorage.message = "新規作成に成功しました";
           this.$router.push("/login");
         })

@@ -64,7 +64,13 @@
 
 <script>
 // import db from "@/main";
-import { getFirestore, setDoc, doc } from "firebase/firestore";
+import {
+  getFirestore,
+  addDoc,
+  doc,
+  collection,
+  serverTimestamp,
+} from "firebase/firestore";
 import SimpleKeyboard from "../components/SimpleKeyboard.vue";
 import OpenModal from "@/components/OpenModal.vue";
 
@@ -216,18 +222,14 @@ export default {
     },
     async setScore() {
       const db = getFirestore();
-      // const userDocRef = doc(db, "users", this.auth.uid);
-      const scoreRef = doc(db, "users", this.auth.uid, "scores");
-      await setDoc(
-        scoreRef,
-        {
-          id: this.auth.uid,
-          time: this.formatedTime,
-          accuracy: this.accurateTyping,
-          wpm: this.wpm,
-        },
-        { merge: true }
-      ).catch((error) => {
+      const userDocRef = doc(db, "users", this.auth.uid);
+      const userScoreDocRef = collection(userDocRef, "scores");
+      await addDoc(userScoreDocRef, {
+        time: this.formatedTime,
+        accuracy: this.accurateTyping,
+        wpm: this.wpm,
+        createdAt: serverTimestamp(),
+      }).catch((error) => {
         console.log(error);
       });
       // const userDocRef = doc(db, "users", this.user.uid);

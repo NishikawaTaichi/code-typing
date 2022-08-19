@@ -5,30 +5,36 @@
         <v-sheet rounded="lg">
           <v-list color="transparent">
             <v-list-item
-              v-for="scoreType in scoreTypeList"
-              :key="scoreType"
+              v-for="(value, key) in tabs"
+              :key="key"
               link
+              @click="onclick(key)"
             >
               <v-list-item-content>
-                <v-list-item-title>{{ scoreType }}</v-list-item-title>
+                <v-list-item-title>{{ value }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
 
-            <v-divider class="my-2"></v-divider>
+            <!-- <v-divider class="my-2"></v-divider> -->
 
-            <v-list-item link color="grey lighten-4">
+            <!-- <v-list-item link color="grey lighten-4">
               <v-list-item-content>
                 <v-list-item-title>総合</v-list-item-title>
               </v-list-item-content>
-            </v-list-item>
+            </v-list-item> -->
           </v-list>
         </v-sheet>
       </v-col>
 
       <v-col>
-        {{ scoreList ? scoreList : "" }}
         <v-sheet min-height="70vh" rounded="lg" class="score-sheet">
-          <LineChart />
+          <keep-alive>
+            <component
+              :is="currentTab"
+              :scoreList="scoreList"
+              ref="childComponents"
+            ></component>
+          </keep-alive>
         </v-sheet>
       </v-col>
     </v-row>
@@ -36,7 +42,9 @@
 </template>
 
 <script>
-import LineChart from "@/components/ScoreLine.vue";
+import AccurateScore from "@/components/AccurateScore.vue";
+import WpmScore from "@/components/WpmScore.vue";
+import TimeScore from "@/components/TimeScore.vue";
 // import db from "@/main";
 import {
   getFirestore,
@@ -48,14 +56,34 @@ import {
 } from "firebase/firestore";
 export default {
   components: {
-    LineChart,
+    AccurateScore,
+    WpmScore,
+    TimeScore,
   },
   data() {
     return {
       auth: null,
-      scoreTypeList: ["タイム", "精度", "WPM"],
       scoreList: [],
+      current: "Accurate",
+      tabs: {
+        Accurate: "精度",
+        Wpm: "WPM",
+        Time: "タイム",
+      },
     };
+  },
+  computed: {
+    currentTab() {
+      return this.current + "Score";
+    },
+    tabNames() {
+      return Object.keys(this.tabs);
+    },
+  },
+  methods: {
+    onclick(tab) {
+      this.current = tab;
+    },
   },
   created() {
     this.auth = JSON.parse(sessionStorage.getItem("user"));
@@ -66,9 +94,15 @@ export default {
     const userScoreDocRef = collection(userDocRef, "scores");
     const q = query(userScoreDocRef, orderBy("createdAt", "asc"));
     const docSnap = await getDocs(q);
+
     docSnap.forEach((doc) => {
+      // console.log(doc.data());
       this.scoreList.push(doc.data());
     });
+    // console.log("scoreList", this.scoreList);
+    this.$refs.childComponents.setArray();
+    // // vuexに格納
+    // this.$store.dispatch("setAsyncScores", this.scoreList);
   },
 };
 </script>
