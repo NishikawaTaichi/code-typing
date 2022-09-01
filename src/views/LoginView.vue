@@ -53,6 +53,7 @@
 <script>
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, getDoc, setDoc, doc } from "firebase/firestore";
+import firebaseUtils from "./../firebase/firebase-utils";
 
 export default {
   data: () => ({
@@ -83,35 +84,26 @@ export default {
     },
     submit() {
       const auth = getAuth();
-      const db = getFirestore();
       signInWithEmailAndPassword(auth, this.email, this.password)
         .then(async (response) => {
-          // this.$refs.form.reset();
-          //ログイン情報をsessionに格納
-          const auth = {
-            displayName: response.user.displayName,
-            email: response.user.email,
-            uid: response.user.uid,
-            refleshToken: response.user.refleshToken,
-          };
-
-          const userDocRef = doc(db, "users", auth.uid);
+          // ログイン中のユーザー情報を更新
+          const db = getFirestore();
+          const userDocRef = doc(db, "users", response.user.uid);
           const userDocSnap = await getDoc(userDocRef);
-
           if (!userDocSnap.exists()) {
             await setDoc(userDocRef, {
-              displayName: auth.displayName,
-              uid: auth.uid,
+              displayName: response.user.displayName,
+              uid: response.user.uid,
             });
           }
-          sessionStorage.setItem("user", JSON.stringify(auth));
+          //ユーザー情報をvuexに格納
+          firebaseUtils.onAuth();
+
           // Topへリダイレクト
           this.$router.push("/");
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorCode + "###" + errorMessage);
+          console.log(error.code + "###" + error.message);
           this.errorMsg = "ログインに失敗しました";
         });
     },

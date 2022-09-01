@@ -1,5 +1,9 @@
 <template>
-  <LineGenerate :chart-data="chartData" :chart-options="chartOptions" />
+  <LineGenerate
+    :chart-data="chartData"
+    :chart-options="chartOptions"
+    :styles="myStyles"
+  />
 </template>
 
 <script>
@@ -40,6 +44,12 @@ export default {
     };
   },
   computed: {
+    myStyles() {
+      return {
+        height: `${600}px`,
+        position: `relative`,
+      };
+    },
     chartData() {
       return {
         labels: this.scoreLen,
@@ -56,6 +66,26 @@ export default {
       return {
         responsive: true,
         maintainAspectRatio: false,
+        scales: {
+          x: {
+            title: {
+              color: "black",
+              display: true,
+              text: "回数",
+            },
+          },
+          y: {
+            title: {
+              color: "black",
+              display: true,
+              text: "WPM",
+              ticks: {
+                maxRotation: 90, // 自動的に回転する角度を固定
+                minRotation: 90,
+              },
+            },
+          },
+        },
       };
     },
     scoreLen() {
@@ -75,7 +105,7 @@ export default {
   //     },
   //   },
   mounted() {
-    console.log("time", this.scoreList);
+    // console.log("time", this.scoreList);
     this.scoreList.forEach((score) => {
       this.wpmScoreList.push(score.wpm);
     });

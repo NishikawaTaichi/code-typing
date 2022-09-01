@@ -13,6 +13,7 @@
     "core-js": "^3.8.3",
     "dayjs": "^1.11.4",
     "firebase": "^9.9.2",
+    "ityped": "^1.0.3",
     "simple-keyboard": "^3.4.138",
     "vue": "^2.6.14",
     "vue-chartjs": "^4.1.1",

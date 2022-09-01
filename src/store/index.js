@@ -19,9 +19,9 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    setScores(state, payload) {
-      this.state.scores.push(payload);
-    },
+    // setScores(state, payload) {
+    //   this.state.scores.push(payload);
+    // },
     onAuthStateChanged(state, user) {
       state.user = user; //firebaseが返したユーザー情報を格納
     },
@@ -30,8 +30,14 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    setAsyncScores({ commit }, payload) {
-      commit("setScores", payload);
+    // setAsyncScores({ commit }, payload) {
+    //   commit("setScores", payload);
+    // },
+    onAsyncAuthStateChanged({ commit }, payload) {
+      commit("onAuthStateChanged", payload.user);
+    },
+    onAsyncUserStatusChanged({ commit }, payload) {
+      commit("onUserStatusChanged", payload.status);
     },
   },
   modules: {},

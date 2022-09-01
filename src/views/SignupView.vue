@@ -97,7 +97,6 @@ export default {
       createUserWithEmailAndPassword(auth, this.email, this.password)
         .then(async (response) => {
           await updateProfile(response.user, { displayName: this.name });
-          // this.$refs.form.reset();
           sessionStorage.message = "新規作成に成功しました";
           this.$router.push("/login");
         })
@@ -108,17 +107,6 @@ export default {
           this.errorMsg = "ユーザーの新規作成に失敗しました";
         });
     },
-    // signup() {
-    //   axios
-    //     .post("/accounts:signUp?key=AIzaSyA0r4Fex7Ju0C-9z7W0_goOKibJncOb1Gc", {
-    //       email: this.email,
-    //       password: this.password,
-    //       returnSecureToken: true,
-    //     })
-    //     .then((response) => console.log(response));
-    //   this.email = "";
-    //   this.password = "";
-    // },
   },
 };
 </script>

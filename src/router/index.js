@@ -4,6 +4,8 @@ import HomeView from "../views/HomeView.vue";
 import SignupView from "../views/SignupView.vue";
 import LoginView from "../views/LoginView.vue";
 import ScoreView from "../views/ScoreView.vue";
+import store from "@/store/index";
+import firebaseUtils from "@/firebase/firebase-utils";
 
 Vue.use(VueRouter);
 
@@ -46,12 +48,15 @@ const router = new VueRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+  if (!store.getters.isLoggedIn) {
+    await firebaseUtils.onAuth();
+    // console.log("store版 uid", store.getters.getUser.uid);
+  }
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
   if (requiresAuth) {
-    const user = sessionStorage.getItem("user");
-    console.log(JSON.parse(user));
-    if (!user) {
+    const isLoggedIn = store.getters.isLoggedIn;
+    if (!isLoggedIn) {
       next({
         path: "/login",
         query: { redirect: to.fullPath },

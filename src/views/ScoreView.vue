@@ -14,14 +14,6 @@
                 <v-list-item-title>{{ value }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-
-            <!-- <v-divider class="my-2"></v-divider> -->
-
-            <!-- <v-list-item link color="grey lighten-4">
-              <v-list-item-content>
-                <v-list-item-title>総合</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item> -->
           </v-list>
         </v-sheet>
       </v-col>
@@ -44,7 +36,6 @@
 <script>
 import AccurateScore from "@/components/score/AccurateScore.vue";
 import WpmScore from "@/components/score/WpmScore.vue";
-import TimeScore from "@/components/score/TimeScore.vue";
 // import db from "@/main";
 import {
   getFirestore,
@@ -58,7 +49,6 @@ export default {
   components: {
     AccurateScore,
     WpmScore,
-    TimeScore,
   },
   data() {
     return {
@@ -68,7 +58,6 @@ export default {
       tabs: {
         Accurate: "精度",
         Wpm: "WPM",
-        Time: "タイム",
       },
     };
   },
@@ -79,18 +68,18 @@ export default {
     tabNames() {
       return Object.keys(this.tabs);
     },
+    user() {
+      return this.$store.getters.getUser;
+    },
   },
   methods: {
     onclick(tab) {
       this.current = tab;
     },
   },
-  created() {
-    this.auth = JSON.parse(sessionStorage.getItem("user"));
-  },
   async mounted() {
     const db = getFirestore();
-    const userDocRef = doc(db, "users", this.auth.uid);
+    const userDocRef = doc(db, "users", this.user.uid);
     const userScoreDocRef = collection(userDocRef, "scores");
     const q = query(userScoreDocRef, orderBy("createdAt", "asc"));
     const docSnap = await getDocs(q);
@@ -100,8 +89,6 @@ export default {
     });
 
     this.$refs.childComponents.setArray();
-    // // vuexに格納
-    // this.$store.dispatch("setAsyncScores", this.scoreList);
   },
 };
 </script>

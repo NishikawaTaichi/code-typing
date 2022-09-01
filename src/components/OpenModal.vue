@@ -16,7 +16,7 @@
         <v-spacer></v-spacer>
 
         <v-btn dark color="green darken-1" @click="refleshAll"
-          >もう一度挑戦する</v-btn
+          >Homeに戻る</v-btn
         >
 
         <v-spacer></v-spacer>

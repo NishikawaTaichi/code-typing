@@ -11,7 +11,6 @@
 
 <script>
 import HeaderComp from "./components/layouts/HeaderComp.vue";
-
 export default {
   name: "App",
   components: { HeaderComp },

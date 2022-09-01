@@ -1,8 +1,8 @@
 <template>
   <LineGenerate
+    :styles="myStyles"
     :chart-data="chartData"
     :chart-options="chartOptions"
-    :height="height"
   />
 </template>
 
@@ -38,7 +38,7 @@ export default {
     },
     height: {
       type: Number,
-      default: 400,
+      default: 1000,
     },
   },
   components: { LineGenerate },
@@ -48,6 +48,12 @@ export default {
     };
   },
   computed: {
+    myStyles() {
+      return {
+        height: `${600}px`,
+        position: `relative`,
+      };
+    },
     chartData() {
       return {
         labels: this.scoreLen,
@@ -64,9 +70,26 @@ export default {
       return {
         responsive: true,
         maintainAspectRatio: false,
-        // scales: {
-        //   ticks: { min: 0, max: 100, stepSize: 10 },
-        // },
+        scales: {
+          x: {
+            title: {
+              color: "black",
+              display: true,
+              text: "回数",
+            },
+          },
+          y: {
+            title: {
+              color: "black",
+              display: true,
+              text: "精度",
+              ticks: {
+                maxRotation: 90, // 自動的に回転する角度を固定
+                minRotation: 90,
+              },
+            },
+          },
+        },
       };
     },
     scoreLen() {
@@ -88,8 +111,8 @@ export default {
     this.scoreList.forEach((score) => {
       this.accurateScoreList.push(score.accuracy);
     });
-    console.log(this.scoreList);
-    console.log(this.accurateScoreList);
+    // console.log(this.scoreList);
+    // console.log(this.accurateScoreList);
   },
 };
 </script>

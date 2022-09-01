@@ -34,7 +34,7 @@
         <span v-else>WPM: {{ wpm }}</span>
       </p>
       <v-btn depressed color="primary" class="mb-6" @click="refleshAll"
-        >リセット</v-btn
+        >お題を変更</v-btn
       >
       <SimpleKeyboard @onChange="onChange" :input="input" />
     </div>
@@ -46,10 +46,26 @@
       @blur="onBlurStartGame"
       class="focus"
     >
+      <v-card style="max-width: 600px; margin: 0 auto" class="pa-3">
+        <v-card-title class="text-h5">遊び方と注意事項</v-card-title>
+        <v-divider class="my-2"></v-divider>
+        <v-card-text class="text-subtitle-1 text-left">
+          1.New Game もしくは Enterを押すとタイピングが開始します。
+          <br />2.行末の↵は改行を表しています。Enterで改行してください。
+          <br />3.Tabを用いたインデントは使用できません。spaceをご利用ください。
+          <br />4.タイピングを終えると、スコアが表示されます。継続してスコアを高めていきましょう。
+          <br />
+        </v-card-text>
+      </v-card>
+      <br />
+      <br />
       <p class="text-h4">スタート</p>
       <v-btn depressed color="primary" class="mb-6" @click="startTyping"
         >New Game</v-btn
       >
+      <br />
+      <br />
+      <div class="text-h4" id="typing-animation"></div>
     </div>
 
     <OpenModal
@@ -73,6 +89,7 @@ import {
 } from "firebase/firestore";
 import SimpleKeyboard from "../components/SimpleKeyboard.vue";
 import OpenModal from "@/components/OpenModal.vue";
+import { init } from "ityped";
 
 export default {
   name: "HomeView",
@@ -100,7 +117,6 @@ export default {
       dialog: false,
       typedStr: "",
       input: "",
-      auth: {},
     };
   },
   computed: {
@@ -108,7 +124,7 @@ export default {
     //   return this.questionStr.slice(0, this.currentIndex);
     // },
     typingStr() {
-      console.log(this.questionStr[this.currentIndex]);
+      // console.log(this.questionStr[this.currentIndex]);
       if (this.questionStr[this.currentIndex] !== undefined) {
         return this.questionStr[this.currentIndex].replaceAll("↵", "↵\n");
       } else {
@@ -133,16 +149,19 @@ export default {
         100
       ).toFixed(1);
     },
-  },
-  created() {
-    this.auth = JSON.parse(sessionStorage.getItem("user"));
-    console.log("uid:", this.auth.uid);
+    user() {
+      return this.$store.getters.getUser;
+    },
   },
   mounted() {
     // console.log(this.$refs.div);
     this.$refs.startGame.focus();
     this.wordCounts = this.questions.length;
+    this.initAnimation();
   },
+  // updated() {
+  //   this.initAnimation();
+  // },
   watch: {
     playing: function (newVal) {
       if (newVal === true) {
@@ -150,9 +169,24 @@ export default {
           this.$refs.typingArea.$el.focus();
         });
       }
+      if (newVal === false) {
+        this.$nextTick(() => {
+          this.initAnimation();
+        });
+      }
     },
   },
   methods: {
+    initAnimation() {
+      let typingAnimation = document.querySelector("#typing-animation");
+      init(typingAnimation, {
+        showCursor: false,
+        strings: [
+          `ようこそ、${this.user.displayName}さん`,
+          "タイピング練習頑張りましょう!",
+        ],
+      });
+    },
     onBlur() {
       this.$refs.typingArea.$el.focus();
     },
@@ -178,7 +212,7 @@ export default {
 
       if (e === undefined) return;
       if (this.questionStr[this.currentIndex] === "↵" && e.key === "Enter") {
-        console.log(true);
+        // console.log(true);
         this.typedStr += "\n";
         this.isMissType = false;
         this.currentIndex++;
@@ -202,7 +236,7 @@ export default {
     },
     async setScore() {
       const db = getFirestore();
-      const userDocRef = doc(db, "users", this.auth.uid);
+      const userDocRef = doc(db, "users", this.user.uid);
       const userScoreDocRef = collection(userDocRef, "scores");
       await addDoc(userScoreDocRef, {
         time: this.formatedTime,
@@ -215,7 +249,11 @@ export default {
     },
     refleshAll() {
       this.playing = false;
-      this.questions = ['function() {↵  console.log("aaaaaaaaaaa");↵}'];
+      this.questions = [
+        'function greeting() {↵  console.log("Hello.");↵  console.log("Good morning.");↵}',
+        'function payday() {↵  if(day === "22"){↵    console.log("today is payday");↵   }↵ }',
+        'function(num) {↵  if(num % 3 === 0 && num % 5 === 0) {↵    console.log("FizzBuzz");↵  } else if (num % 3 === 0) {↵    console.log("Fizz");↵  } else if (num % 5 === 0) {↵    console.log("Buzz");↵  } else {↵    console.log(num);↵  } ↵}',
+      ];
       this.questionStr = "";
       this.currentIndex = 0; //文字列の中で今どこを入力中か。typingStr以上のとき終了してモーダル表示
       this.missCount = 0; //ミスタイプした数
